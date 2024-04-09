@@ -1,0 +1,116 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2636
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red33\green255\blue255;\red0\green0\blue0;
+\red251\green2\blue255;\red0\green0\blue0;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\csgray\c0;\cssrgb\c0\c99144\c100000;\csgray\c0\c0;
+\cssrgb\c100000\c25279\c100000;\cssrgb\c0\c0\c0\c84706;\cssrgb\c0\c0\c0;}
+\margl1440\margr1440\vieww22040\viewh14980\viewkind0
+\deftab720
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+
+\f0\fs22 \cf2 \cb3 \CocoaLigature0 # run fastqc\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb1 \
+>qcjob.sh\
+for file in *.fastq\
+do echo "fastqc $\{file\}">> qcjob.sh\
+done\
+\
+# example line\
+fastqc C1A.fastq\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb3 # run cutadapt\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb1 \
+>cut.sh\
+for file in *.fastq\
+do echo "cutadapt -u 10 -a A\{50\} --minimum-length 20 -q 20 -o $\{file\}.trim $\{file\}">> cut.sh\
+done\
+\
+# example line\
+cutadapt -u 10 -a A\{50\} --minimum-length 20 -q 20 -o C1A.fastq.trim C1A.fastq\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb3 # re-run fastqc\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb1 \
+>qcjob_trimmed.sh\
+for file in *.trim\
+do echo "fastqc $\{file\}">> qcjob_trimmed.sh\
+done\
+\
+# example line\
+fastqc C1A.trim\
+\
+# Move HTML files to local computer\
+# Make sure 5' adaptor and 3' polyA gone\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb3 \expnd0\expndtw0\kerning0
+# mapping to ABCD to determine symbiont proportions\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb4 \
+# example line\
+\
+bowtie2 -x /users/wrightrm/genome_databases/symABCD_for_symProportions/symABCD.fasta -U C1A.trim --local -p 4 -S C1A.ofavd.sam\
+\
+# lab corals primarily host D\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb3 # mapping to concatenated host and symbiont genome\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb1 \kerning1\expnd0\expndtw0 \
+# Example line\
+bowtie2 -x /work/group/wrightrm/biol_4105/genome_databases/OfavGenome_SymbDGenome/OfavGenome_SymbDGenome.fasta -U C1A.trim --local -p 4 -S C1A.ofavd.sam &\
+\
+C2B	80.16% overall alignment rate\
+C2A	85.88% overall alignment rate\
+C5B	85.83% overall alignment rate\
+C1B	88.28% overall alignment rate\
+C5A	83.74% overall alignment rate\
+C1A	90.19% overall alignment rate\
+H5B	85.04% overall alignment rate\
+H2B	84.38% overall alignment rate\
+H2A	86.17% overall alignment rate\
+H1A	89.21% overall alignment rate\
+H5A	85.80% overall alignment rate\
+H1B	88.62% overall alignment rate\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb5 # average alignment rate = 86.11%\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf6 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \cb3 \CocoaLigature0 # counting ofav host reads\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb1 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab720\sl337\partightenfactor0
+\cf7 \cb4 \expnd0\expndtw0\kerning0
+\CocoaLigature1 >doCountsOfavmRNA\
+for file in *.sam\
+do echo "htseq-count -t mRNA -i Name -m intersection-nonempty $file /work/group/wrightrm/biol_4105/genome_databases/OfavGenome_Prada2016/GCF_002042975.1_ofav_dov_v1_genomic.gff> $\{file/sam/counts.txt\}" >> doCountsOfavmRNA\
+done\cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+\
+# example line\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+htseq-count -t mRNA -i Name -m intersection-nonempty C1A.ofavd.sam /work/group/wrightrm/biol_4105/genome_databases/OfavGenome_Prada2016/GCF_002042975.1_ofav_dov_v1_genomic.gff> C1A.ofavd.counts.txt\
+\pard\pardeftab720\sl337\partightenfactor0
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cb3 \expnd0\expndtw0\kerning0
+# counting SymbD reads\
+\pard\pardeftab720\sl337\partightenfactor0
+\cb1 \kerning1\expnd0\expndtw0 \
+\cf7 \cb4 \expnd0\expndtw0\kerning0
+\CocoaLigature1 >doCountsSymD\
+for file in *.sam\
+do echo "htseq-count -t gene -i ID -m intersection-nonempty $file /work/group/wrightrm/biol_4105/genome_databases/SymbD_Durusdinium_genome/102_symbd.gff> $\{file/sam/counts.txt\}" >> doCountsSymD\
+done\cb1 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \CocoaLigature0 # example line\
+htseq-count -t gene -i ID -m intersection-nonempty C1B.ofavd.sam /work/group/wrightrm/biol_4105/genome_databases/SymbD_Durusdinium_genome/102_symbd.gff> C1B.ofavd.sym.counts.txt }
